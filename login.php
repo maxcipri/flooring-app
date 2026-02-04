@@ -45,7 +45,7 @@ if (isset($_GET['shop'])) {
     $shopifyClient = new ShopifyClient($shop, "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
     
     // Build redirect URL
-    $redirect_url = "https://" . $_SERVER['HTTP_HOST'] . "/Shopify/flooring_new/login.php";
+    $redirect_url = "https://flooring-app-production.up.railway.app/login.php";
     
     // Redirect to Shopify OAuth page
     $auth_url = $shopifyClient->getAuthorizeUrl(SHOPIFY_SCOPE, $redirect_url);
