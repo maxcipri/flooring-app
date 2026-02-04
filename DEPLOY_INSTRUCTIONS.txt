@@ -1,0 +1,112 @@
+═══════════════════════════════════════════════════════
+    FRESH SHOPIFY APP - READY TO DEPLOY
+═══════════════════════════════════════════════════════
+
+NEW DIRECTORY: flooring_new
+
+This is a completely fresh build with all fixes included:
+✅ CSP headers in all PHP files
+✅ session_start() properly placed
+✅ Clean code structure
+✅ Proper .htaccess configuration
+✅ All security fixes applied
+
+═══════════════════════════════════════════════════════
+DEPLOYMENT STEPS:
+═══════════════════════════════════════════════════════
+
+1. UPLOAD FILES
+   ─────────────
+   - Extract flooring_new.zip
+   - Upload the entire "flooring_new" folder to:
+     /home/cxzhjo02ekuc/public_html/Shopify/
+   
+   Final path: /home/cxzhjo02ekuc/public_html/Shopify/flooring_new/
+
+2. TEST PHP EXECUTION
+   ───────────────────
+   Visit: https://factoryflooringliquidators.biz/Shopify/flooring_new/test.php
+   
+   You should see: "✓ PHP IS WORKING!" in green
+   
+   If it downloads instead:
+   - Upload php.ini (included in zip)
+   - Or call GoDaddy to enable PHP for this directory
+
+3. UPDATE SHOPIFY PARTNER DASHBOARD
+   ──────────────────────────────────
+   Go to: https://partners.shopify.com/
+   → Apps → Flooring Pricing app → Settings
+   
+   Change App URL to:
+   https://factoryflooringliquidators.biz/Shopify/flooring_new/index.php
+   
+   Change Allowed redirection URL(s) to:
+   https://factoryflooringliquidators.biz/Shopify/flooring_new/login.php
+
+4. TEST THE APP
+   ────────────
+   - Go to Shopify Admin
+   - Click Apps → Flooring Magic App
+   - Should load dashboard with products!
+
+═══════════════════════════════════════════════════════
+FILES INCLUDED:
+═══════════════════════════════════════════════════════
+
+Core Files:
+  ✓ index.php         - App entry point (with CSP)
+  ✓ login.php         - OAuth handler (with session_start)
+  ✓ dashboard.php     - Main dashboard (with CSP)
+  ✓ keys.php          - API credentials
+  ✓ shopify.php       - ShopifyClient class
+  ✓ connection.php    - Database connection
+
+Supporting Files:
+  ✓ submit_square.php
+  ✓ submitbulk.php
+  ✓ show_all.php
+  ✓ bulk.php
+  ✓ carrier_api.php
+  ✓ carrier_ship.php
+  ✓ collections.php
+  ✓ get_per_square.php
+  ✓ search_products_main.php
+  ✓ pagination_function.php
+  ✓ update_products.php
+  ✓ webhook.php
+
+Configuration:
+  ✓ .htaccess         - Forces PHP execution + CSP headers
+  ✓ test.php          - PHP execution test
+
+═══════════════════════════════════════════════════════
+WHAT'S FIXED:
+═══════════════════════════════════════════════════════
+
+1. CSP Headers - All files have proper headers for Shopify embedding
+2. Sessions - session_start() in correct order
+3. Clean Structure - No closing ?> tags
+4. .htaccess - Forces PHP 7.4 execution
+5. Error Handling - Better try/catch blocks
+6. Security - All previous SQL injection fixes included
+
+═══════════════════════════════════════════════════════
+TROUBLESHOOTING:
+═══════════════════════════════════════════════════════
+
+If test.php downloads instead of showing green message:
+→ PHP handler is not configured for this directory
+→ Solution: Call GoDaddy support or upload php.ini
+
+If app shows "refused to connect":
+→ Check that App URL in Partner Dashboard is correct
+→ Make sure it points to /flooring_new/ not /flooring/
+
+If blank page in Shopify:
+→ Open browser console (F12)
+→ Send me the error messages
+
+═══════════════════════════════════════════════════════
+
+This is a CLEAN START with all known issues fixed!
