@@ -32,7 +32,11 @@ if (isset($_GET['code']) && isset($_GET['shop'])) {
             header("Location: " . $redirect);
             exit;
         } else {
-            die("Failed to get access token from Shopify");
+            echo "<h2>Failed to get access token from Shopify</h2>";
+            echo "<p>Code: " . htmlspecialchars($_GET['code'] ?? 'NO CODE') . "</p>";
+            echo "<p>Shop: " . htmlspecialchars($_GET['shop'] ?? 'NO SHOP') . "</p>";
+            echo "<pre>Debug: " . print_r($shopifyClient, true) . "</pre>";
+            die();
         }
     } catch (Exception $e) {
         die("OAuth Error: " . $e->getMessage());
