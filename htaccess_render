@@ -1,0 +1,6 @@
+# Enable rewrite
+RewriteEngine On
+
+# Set CSP headers for Shopify embedding
+Header always set Content-Security-Policy "frame-ancestors https://*.myshopify.com https://admin.shopify.com"
+Header always unset X-Frame-Options

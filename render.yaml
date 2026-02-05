@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: flooring-app
+    env: docker
+    dockerfilePath: ./Dockerfile.render
+    healthCheckPath: /test.php
+    envVars:
+      - key: PORT
+        value: 80
