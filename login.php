@@ -1,6 +1,17 @@
 <?php
-// Session must be started before headers
+// --- Session cookie settings required for Shopify Admin iframe (SameSite=None; Secure) ---
 if (!session_id()) {
+    if (PHP_VERSION_ID >= 70300) {
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'secure' => true,
+            'httponly' => true,
+            'samesite' => 'None',
+        ]);
+    } else {
+        session_set_cookie_params(0, '/; samesite=None', '', true, true);
+    }
     session_start();
 }
 
@@ -16,26 +27,39 @@ define('SHOPIFY_API_KEY', $api_key);
 define('SHOPIFY_SECRET', $secret);
 define('SHOPIFY_SCOPE', 'read_products,write_products,write_themes,write_shipping');
 
+function current_base_url(): string
+{
+    // Render uses HTTPS, and sets X-Forwarded-Proto
+    $proto = (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']))
+        ? $_SERVER['HTTP_X_FORWARDED_PROTO']
+        : ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http');
+
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    return $proto . '://' . $host;
+}
+
 // OAuth callback - Shopify sent us back with a code
 if (isset($_GET['code']) && isset($_GET['shop'])) {
     $shopifyClient = new ShopifyClient($_GET['shop'], "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
-    
+
     try {
         $access_token = $shopifyClient->getAccessToken($_GET['code']);
-        
+
         if (!empty($access_token)) {
             $_SESSION['token'] = $access_token;
             $_SESSION['shop'] = $_GET['shop'];
-            
+
             // Success! Redirect to dashboard
-            $redirect = "dashboard.php?token=" . $access_token . "&host=" . ($_REQUEST['host'] ?? '') . "&shop=" . $_GET['shop'];
+            $redirect = "dashboard.php?token=" . urlencode($access_token)
+                . "&host=" . urlencode($_REQUEST['host'] ?? '')
+                . "&shop=" . urlencode($_GET['shop']);
+
             header("Location: " . $redirect);
             exit;
         } else {
             echo "<h2>Failed to get access token from Shopify</h2>";
             echo "<p>Code: " . htmlspecialchars($_GET['code'] ?? 'NO CODE') . "</p>";
             echo "<p>Shop: " . htmlspecialchars($_GET['shop'] ?? 'NO SHOP') . "</p>";
-            echo "<pre>Debug: " . print_r($shopifyClient, true) . "</pre>";
             die();
         }
     } catch (Exception $e) {
@@ -47,10 +71,10 @@ if (isset($_GET['code']) && isset($_GET['shop'])) {
 if (isset($_GET['shop'])) {
     $shop = $_GET['shop'];
     $shopifyClient = new ShopifyClient($shop, "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
-    
-    // Build redirect URL - always use HTTPS on Render
-    $redirect_url = "https://flooring-app.onrender.com/login.php";
-    
+
+    // Build redirect URL from current host (works if domain changes)
+    $redirect_url = current_base_url() . "/login.php";
+
     // Redirect to Shopify OAuth page
     $auth_url = $shopifyClient->getAuthorizeUrl(SHOPIFY_SCOPE, $redirect_url);
     header("Location: " . $auth_url);
