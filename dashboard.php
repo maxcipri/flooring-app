@@ -6,7 +6,6 @@ header_remove("Content-Security-Policy");
 header_remove("X-Frame-Options");
 header("Content-Security-Policy: frame-ancestors https://*.myshopify.com https://admin.shopify.com", true);
 
-// Pull credentials + session values
 require_once __DIR__ . '/keys.php';
 require_once __DIR__ . '/shopify.php';
 require_once __DIR__ . '/connection.php';
@@ -47,51 +46,88 @@ if ($conn === null) {
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
+    ?>
+    <!DOCTYPE html>
+    <html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <title>Flooring App - Live Mode</title>
+        <style>
+            body { font-family: Arial; padding: 24px; }
+            .box { border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+            .muted { color: #666; }
+        </style>
+    </head>
+    <body>
+        <div class="box">
+            <h2 style="margin:0 0 8px 0;">Live mode (DB disabled)</h2>
+            <div class="muted">Shop: <?= htmlspecialchars($shop) ?></div>
 
-    echo '<!DOCTYPE html>';
-    echo '<html><head><meta charset="utf-8"><title>Flooring App - Live Mode</title>';
-    echo '<style>
-        body{font-family:Arial;padding:24px;}
-        .box{border:1px solid #ddd;padding:16px;border-radius:8px;margin-bottom:16px;}
-        table{width:100%;border-collapse:collapse;}
-        th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;}
-        .muted{color:#666;}
-    </style>';
-    echo '</head><body>';
+            <?php if ($count !== null): ?>
+                <div style="margin-top:8px;">Products in store: <strong><?= (int)$count ?></strong></div>
+            <?php else: ?>
+                <div style="margin-top:8px;" class="muted">Could not read product count.</div>
+            <?php endif; ?>
 
-    echo '<div class="box">';
-    echo '<h2 style="margin:0 0 8px 0;">Live mode (DB disabled)</h2>';
-    echo '<div class="muted">Shop: ' . htmlspecialchars($shop) . '</div>';
-    if ($count !== null) {
-        echo '<div style="margin-top:8px;">Products in store: <strong>' . $count . '</strong></div>';
-    } else {
-        echo '<div style="margin-top:8px;" class="muted">Could not read product count.</div>';
-    }
-    echo '<div style="margin-top:12px;" class="muted">DB features are temporarily disabled.</div>';
-    if ($error) {
-        echo '<div style="margin-top:12px;" class="muted">API error: ' . htmlspecialchars($error) . '</div>';
-    }
-    echo '</div>';
+            <div style="margin-top:12px;" class="muted">DB features are temporarily disabled.</div>
 
-    echo '<div class="box">';
-    echo '<h3 style="margin:0 0 12px 0;">First 20 products (from Shopify)</h3>';
+            <?php if ($error): ?>
+                <div style="margin-top:12px;" class="muted">API error: <?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+        </div>
 
-    if (empty($products)) {
-        echo '<div class="muted">No products returned (or API call failed).</div>';
-    } else {
-        echo '<table><thead><tr><th>ID</th><th>Title</th><th>Handle</th><th>Status</th></tr></thead><tbody>';
-        foreach ($products as $p) {
-            $id = htmlspecialchars((string)($p['id'] ?? ''));
-            $title = htmlspecialchars((string)($p['title'] ?? ''));
-            $handle = htmlspecialchars((string)($p['handle'] ?? ''));
-            $status = htmlspecialchars((string)($p['status'] ?? ''));
-            echo "<tr><td>{$id}</td><td>{$title}</td><td>{$handle}</td><td>{$status}</td></tr>";
-        }
-        echo '</tbody></table>';
-    }
+        <div class="box">
+            <h3 style="margin:0 0 12px 0;">First 20 products (from Shopify)</h3>
 
-    echo '</div>';
+            <?php if (empty($products)): ?>
+                <div class="muted">No products returned (or API call failed).</div>
+            <?php else: ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Handle</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($products as $p): ?>
+                            <tr>
+                                <td><?= htmlspecialchars((string)($p['id'] ?? '')) ?></td>
+                                <td><?= htmlspecialchars((string)($p['title'] ?? '')) ?></td>
+                                <td><?= htmlspecialchars((string)($p['handle'] ?? '')) ?></td>
+                                <td><?= htmlspecialchars((string)($p['status'] ?? '')) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+        </div>
 
-    echo '<div class="box">';
-    echo '<h3 style="margin:0 0 8px 0;">DB later</h3>';
-    echo '<div class="muted">W
+        <div class="box">
+            <h3 style="margin:0 0 8px 0;">DB later</h3>
+            <div class="muted">When you want DB back, set MYSQLHOST, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQLPORT in Render.</div>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+// If DB is available, keep app alive for now
+?>
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <title>Flooring App</title>
+    <style>body{font-family:Arial;padding:24px}.muted{color:#666}</style>
+</head>
+<body>
+    <h2>DB connected</h2>
+    <div class="muted">Spune-mi și îți reactivez dashboard-ul original, cu DB.</div>
+</body>
+</html>
