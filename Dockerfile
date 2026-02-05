@@ -9,14 +9,18 @@ RUN a2enmod rewrite headers
 # Copy application files
 COPY . /var/www/html/
 
+# Create Apache config to set CSP headers
+RUN echo '<Directory /var/www/html>' > /etc/apache2/conf-available/csp-headers.conf && \
+    echo '    Header always set Content-Security-Policy "frame-ancestors https://*.myshopify.com https://admin.shopify.com"' >> /etc/apache2/conf-available/csp-headers.conf && \
+    echo '    Header always unset X-Frame-Options' >> /etc/apache2/conf-available/csp-headers.conf && \
+    echo '</Directory>' >> /etc/apache2/conf-available/csp-headers.conf && \
+    a2enconf csp-headers
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
-# Configure Apache to listen on PORT env variable
-RUN sed -i 's/80/${PORT}/g' /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf
-
-# Expose port
+# Expose port 80
 EXPOSE 80
 
 # Start Apache
